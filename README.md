@@ -10,6 +10,7 @@ This is/will be a collection of several self-written hacking tools/scripts hopef
 ## Index
 
 * [**beancracker**](./beancracker/README.md) ... a tool for cracking password hashes
+* [**knock-knock**](./knock-knock/README.md) ... a bad alternative to nmap
 
 ---
 
