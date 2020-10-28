@@ -3,4 +3,4 @@ _Cracking all the beans_
 
 ---
 
-![beancracker](./beancracker.jpg)
+![beancracker](./images/beancracker.jpg)
