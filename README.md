@@ -9,7 +9,7 @@ This is/will be a collection of several self-written hacking tools/scripts hopef
 
 ## Index
 
-* **Nutcracker** ... a tool for cracking password hashes
+* [**beancracker**](./nutcracker/README.md) ... a tool for cracking password hashes
 
 ---
 
