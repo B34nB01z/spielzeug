@@ -2,17 +2,23 @@
 
 import os
 import sys
+import time
 import shutil
 from argparse import ArgumentParser
 
 # -- HASHING MODULES -- #
 import crypt
+import bcrypt
 # -- HASHING MODULES -- #
 
 HASHES = {
     'crypt': {
         'salt_len_required': True,
         'compare': (lambda w, h, l: crypt.crypt(w, h[:l]) == h),
+    },
+    'bcrypt': {
+        'salt_len_required': False,
+        'compare': (lambda w, h, l: bcrypt.checkpw(w.encode(), h.encode())),
     },
 }
 
@@ -57,6 +63,7 @@ def main():
         os._exit(1)
 
     print('[*] Let the cracking begin ... ')
+    stime = time.time()
     
     with open(args.hashes, 'r') as hl:
         with open(args.wordlist, 'r') as wl:
@@ -64,7 +71,7 @@ def main():
                 wl.seek(0)
                 found = False
                 h = h.strip()
-                print('[*] Cracking "{h}" ...', end='')
+                print(f'[*] Cracking "{h}" ...', end='')
                 sys.stdout.flush()
                 for w in wl.readlines():
                     w = w.strip()
@@ -74,6 +81,8 @@ def main():
                         break
                 if not found:
                     print(f'\r[-] Couldn\'t crack "{h}" ... no matches found!')
+
+    print(f'[*] Finished after {time.time()-stime:.2f}s ... ')
 
 if __name__ == '__main__':
     main()
