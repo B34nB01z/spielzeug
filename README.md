@@ -13,7 +13,8 @@ This is/will be a collection of several self-written hacking tools/scripts hopef
 * [**knock-knock**](./knock-knock/README.md) ... a bad alternative to nmap
 * [**bowser**](./bowser/README.md) ... for "anonymous" web-crawling
 * [**fake-news**](./fake-news/README.md) ... a primitive domain name spoofer
+* [**bean-flooder**](./bean-flooder/README.md) ... a UDP DoS-ing tool.
 
 ---
 
-... B34nB01z (October 2020)
+... B34nB01z (November 2020)
