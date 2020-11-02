@@ -4,6 +4,8 @@ import os
 import sys
 import time
 import shutil
+from typing import *
+from threading import Thread
 from argparse import ArgumentParser
 
 # -- HASHING MODULES -- #
@@ -22,10 +24,24 @@ HASHES = {
     },
 }
 
+cu_found: bool = False
+
 def print_delim(sym: str = '=') -> None:
     print('='*shutil.get_terminal_size().columns)
 
+def crack(ws: List[str], h: str, sl: Optional[int], cmp: Callable[[str, str, Optional[int]], bool]) -> None:
+    global cu_found
+    for w in ws:
+        if cu_found:
+            break
+        if cmp(w, h, sl):
+            print(f'\r[+] Cracked "{h}" ... "{w}"')
+            cu_found = True
+            break
+
 def main():
+    global cu_found
+
     print_delim()
     print(''' ,,                                                                                              
 *MM                                                                    `7MM                      
@@ -42,6 +58,7 @@ def main():
     parser.add_argument('wordlist', type=str, help='Path to wordlist - one word per line ... ')
     parser.add_argument('-t', '--hash-type', type=str, help='The hashes\' hash type ... ', default='crypt')
     parser.add_argument('-s', '--salt-len', type=int, help='The salt length (if required) ... ')
+    parser.add_argument('--threads', type=int, help='How many threads to use ... ', default=4)
     args = parser.parse_args()
 
     if not args.hash_type in HASHES.keys():
@@ -64,23 +81,30 @@ def main():
 
     print('[*] Let the cracking begin ... ')
     stime = time.time()
-    
+
     with open(args.hashes, 'r') as hl:
+        ws = []
         with open(args.wordlist, 'r') as wl:
-            for h in hl.readlines():
-                wl.seek(0)
-                found = False
-                h = h.strip()
-                print(f'[*] Cracking "{h}" ...', end='')
-                sys.stdout.flush()
-                for w in wl.readlines():
-                    w = w.strip()
-                    if HASHES[args.hash_type]['compare'](w, h, args.salt_len):
-                        print(f'\r[+] Cracked "{h}" ... "{w}"')
-                        found = True
-                        break
-                if not found:
-                    print(f'\r[-] Couldn\'t crack "{h}" ... no matches found!')
+            ws = [l.strip() for l in wl.readlines()]
+        parts = len(ws)//args.threads
+        for h in hl.readlines():
+            cu_found = False
+            h = h.strip()
+            print(f'[*] Cracking "{h}" ...', end='')
+            sys.stdout.flush()
+
+            ts = []
+            for i in range(args.threads-1):
+                ts.append(Thread(target=crack, args=(ws[i*parts:(i+1)*parts], h, args.salt_len, HASHES[args.hash_type]['compare'])))
+                ts[-1].start()
+            ts.append(Thread(target=crack, args=(ws[(args.threads-1)*parts:], h, args.salt_len, HASHES[args.hash_type]['compare'])))
+            ts[-1].start()
+
+            for t in ts:
+                t.join()
+
+            if not cu_found:
+                print(f'\r[-] Couldn\'t crack "{h}" ... no matches found!')
 
     print(f'[*] Finished after {time.time()-stime:.2f}s ... ')
 
