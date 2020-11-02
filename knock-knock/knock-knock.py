@@ -14,10 +14,6 @@ PROTOCOLS = {
         'type': socket.SOCK_STREAM,
         'known_ports': './tcp.csv',
     },
-    'udp': {
-        'type': socket.SOCK_DGRAM,
-        'known_ports': './udp.csv'
-    },
 }
 
 def print_delim(sym: str = '=') -> None:
@@ -57,15 +53,11 @@ def main():
         print(f'[-] Unknown range format "{args.range}"! Make sure you specify the range in this "{{from}}-{{to}}" format ... ')
         os._exit(1)
 
-    if not args.protocol.lower() in ['tcp', 'udp']:
-        print(f'[-] Unknown transport layer protocol!')
-        os._exit(1)
-
-    prot = PROTOCOLS[args.protocol.lower()]['type']
+    prot = PROTOCOLS['tcp']['type']
 
     print('[*] Loading list of known port assignments ... ')
     known = dict()
-    with open(PROTOCOLS[args.protocol.lower()]['known_ports'], 'r') as f:
+    with open(PROTOCOLS['tcp']['known_ports'], 'r') as f:
         reader = csv.reader(f, delimiter=',', quotechar='"')
         reader.__next__()
         for r in reader:
