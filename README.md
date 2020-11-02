@@ -12,6 +12,7 @@ This is/will be a collection of several self-written hacking tools/scripts hopef
 * [**beancracker**](./beancracker/README.md) ... a tool for cracking password hashes
 * [**knock-knock**](./knock-knock/README.md) ... a bad alternative to nmap
 * [**bowser**](./bowser/README.md) ... for "anonymous" web-crawling
+* [**fake-news**](./fake-news/README.md) ... a primitive domain name spoofer
 
 ---
 
